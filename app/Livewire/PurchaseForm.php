@@ -10,20 +10,29 @@ use Flux\Flux;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
+use Livewire\Attributes\Title;
 use Livewire\Component;
 
+#[Title('Purchase form')]
 class PurchaseForm extends Component
 {
     public array $rows = [];
 
     public float $total = 0.0;
 
+    public ?Purchase $purchase = null;
+
+    public bool $isEditing = false;
+
     public array $items = [];
 
     public array $brands = [];
 
-    public function mount(): void
+    public function mount(?Purchase $purchase = null): void
     {
+        $this->purchase = $purchase;
+        $this->isEditing = $purchase !== null;
+
         $this->items = Item::query()
             ->select(['id', 'name'])
             ->orderBy('name')
@@ -36,7 +45,20 @@ class PurchaseForm extends Component
             ->get()
             ->toArray();
 
-        $this->rows = [$this->newRow()];
+        if ($this->isEditing) {
+            $this->rows = $this->purchase->items
+                ->map(fn (PurchaseItem $purchaseItem): array => [
+                    'item_id' => (string) $purchaseItem->item_id,
+                    'brand_id' => (string) $purchaseItem->brand_id,
+                    'qty' => (int) $purchaseItem->qty,
+                    'price' => (float) $purchaseItem->price,
+                ])
+                ->all();
+        }
+
+        if ($this->rows === []) {
+            $this->rows = [$this->newRow()];
+        }
 
         $this->calculateTotal();
     }
@@ -85,9 +107,13 @@ class PurchaseForm extends Component
         $validatedRows = Validator::make(['rows' => $rows], $this->purchaseRules())->validate()['rows'];
 
         DB::transaction(function () use ($validatedRows): void {
-            $purchase = new Purchase();
+            $purchase = $this->purchase ?? new Purchase();
             $purchase->total = $this->total;
             $purchase->save();
+
+            if ($this->isEditing) {
+                $purchase->items()->delete();
+            }
 
             foreach ($validatedRows as $row) {
                 $purchaseItem = new PurchaseItem();
@@ -98,11 +124,27 @@ class PurchaseForm extends Component
                 $purchaseItem->price = (float) $row['price'];
                 $purchaseItem->save();
             }
+
+            $this->purchase = $purchase;
         });
 
-        $this->resetForm();
+        if ($this->isEditing) {
+            $this->purchase->load('items');
+            $this->rows = $this->purchase->items
+                ->map(fn (PurchaseItem $purchaseItem): array => [
+                    'item_id' => (string) $purchaseItem->item_id,
+                    'brand_id' => (string) $purchaseItem->brand_id,
+                    'qty' => (int) $purchaseItem->qty,
+                    'price' => (float) $purchaseItem->price,
+                ])
+                ->all();
 
-        Flux::toast(variant: 'success', text: __('Purchase saved successfully.'));
+            $this->calculateTotal();
+        } else {
+            $this->resetForm();
+        }
+
+        Flux::toast(variant: 'success', text: __($this->isEditing ? 'Purchase updated successfully.' : 'Purchase saved successfully.'));
     }
 
     public function calculateTotal(): void
