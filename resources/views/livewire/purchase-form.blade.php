@@ -1,5 +1,6 @@
-<div>
-    <div class="relative w-full overflow-x-auto rounded-xl border border-neutral-200 dark:border-neutral-700">
+<div x-data="{ total: @entangle('total').live }">
+    <form wire:submit.prevent="save" class="space-y-4">
+        <div class="relative w-full overflow-x-auto rounded-xl border border-neutral-200 dark:border-neutral-700">
         <table class="min-w-full w-full table-fixed divide-y divide-neutral-200 dark:divide-neutral-700">
             <thead>
                 <tr>
@@ -21,6 +22,9 @@
                                     <flux:select.option value="{{ $item['id'] }}">{{ $item['name'] }}</flux:select.option>
                                 @endforeach
                             </flux:select>
+                            @error('rows.' . $index . '.item_id')
+                                <p class="mt-2 text-xs font-medium text-red-500">{{ $message }}</p>
+                            @enderror
                         </td>
 
                         <td class="px-4 py-3">
@@ -30,6 +34,9 @@
                                     <flux:select.option value="{{ $brand['id'] }}">{{ $brand['name'] }}</flux:select.option>
                                 @endforeach
                             </flux:select>
+                            @error('rows.' . $index . '.brand_id')
+                                <p class="mt-2 text-xs font-medium text-red-500">{{ $message }}</p>
+                            @enderror
                         </td>
 
                         <td class="px-4 py-3">
@@ -69,21 +76,36 @@
             <tfoot class="border-t border-neutral-200 dark:border-neutral-700">
                 <tr>
                     <td colspan="3" class="px-4 py-3">
-                        <flux:button
-                            type="button"
-                            variant="primary"
-                            class="w-full sm:w-auto"
-                            wire:click="addRow"
-                        >
-                            Add Row
-                        </flux:button>
+                        <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
+                            <flux:button
+                                type="button"
+                                variant="primary"
+                                class="w-full sm:w-auto"
+                                wire:click="addRow"
+                            >
+                                Add Row
+                            </flux:button>
+
+                            <flux:button
+                                type="submit"
+                                variant="primary"
+                                class="w-full sm:w-auto"
+                            >
+                                Save Purchase
+                            </flux:button>
+                        </div>
+
+                        @error('rows')
+                            <p class="mt-2 text-xs font-medium text-red-500">{{ $message }}</p>
+                        @enderror
                     </td>
                     <td class="px-4 py-3 text-right text-sm font-semibold text-neutral-700 dark:text-neutral-300">Total</td>
                     <td class="px-4 py-3 text-right text-base font-semibold text-neutral-900 dark:text-neutral-100">
-                        {{ number_format($total, 2) }}
+                        <span x-text="Number(total).toFixed(2)">{{ number_format($total, 2) }}</span>
                     </td>
                 </tr>
             </tfoot>
         </table>
-    </div>
+        </div>
+    </form>
 </div>
