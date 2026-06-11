@@ -11,14 +11,7 @@ class PurchaseForm extends Component
 
     public function mount()
     {
-        $this->rows = [
-            [
-                'item_id' => '',
-                'brand_id' => '',
-                'qty' => 1,
-                'price' => 0,
-            ]
-        ];
+        
     }
 
     public function render()

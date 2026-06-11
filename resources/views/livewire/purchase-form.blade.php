@@ -1,7 +1,5 @@
 <div>
     <h2 class="text-xl font-bold">
-        Purchase Form Working
+        Purchase Form
     </h2>
-
-    <pre>{{ json_encode($rows, JSON_PRETTY_PRINT) }}</pre>
 </div>
