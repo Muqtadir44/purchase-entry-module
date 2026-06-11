@@ -11,6 +11,10 @@ class PurchaseView extends Component
     public function mount(?Purchase $purchase = null): void
     {
         $this->purchase = $purchase;
+
+        if ($this->purchase) {
+            $this->purchase->load(['items.item', 'items.brand']);
+        }
     }
     public function render()
     {
