@@ -17,12 +17,16 @@ class PurchaseList extends Component
 
     public function confirmDelete(int $id): void
     {
+        abort_unless(auth()->user()?->hasRole('Admin'), 403);
+
         $this->deletingPurchaseId = $id;
         $this->showDeleteModal = true;
     }
 
     public function deletePurchase(): void
     {
+        abort_unless(auth()->user()?->hasRole('Admin'), 403);
+
         if (! $this->deletingPurchaseId) {
             return;
         }

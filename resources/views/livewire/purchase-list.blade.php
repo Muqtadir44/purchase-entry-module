@@ -7,10 +7,12 @@
             <flux:text variant="subtle">Browse saved purchase entries and their totals.</flux:text>
         </div>
 
+        @role('Admin')
         <a href="{{ route('purchases.create') }}" wire:navigate
             class="inline-flex items-center justify-center rounded-lg bg-neutral-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-neutral-800 dark:bg-neutral-100 dark:text-neutral-900 dark:hover:bg-neutral-200">
             Add Purchase
         </a>
+        @endrole
     </div>
 
     {{-- Table Card --}}
@@ -55,11 +57,13 @@
                                     <flux:menu.item icon="eye" :href="route('purchases.view', $purchase)" wire:navigate>
                                         View
                                     </flux:menu.item>
+                                    @role('Admin')
                                     <flux:menu.item icon="pencil-square" :href="route('purchases.edit', $purchase)" wire:navigate>
                                         Edit
                                     </flux:menu.item>
                                     <flux:menu.separator />
                                     <flux:menu.item icon="trash" variant="danger" wire:click="confirmDelete({{ $purchase->id }})">Delete</flux:menu.item>
+                                    @endrole
                                 </flux:menu>
                             </flux:dropdown>
                         </flux:table.cell>
