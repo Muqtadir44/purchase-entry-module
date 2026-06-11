@@ -1,7 +1,8 @@
 <section class="w-full space-y-4">
 
     {{-- Header Card --}}
-    <div class="flex flex-col gap-3 rounded-xl border border-neutral-200 bg-white/80 p-4 shadow-sm backdrop-blur-sm dark:border-neutral-700 dark:bg-neutral-900/70 sm:flex-row sm:items-center sm:justify-between">
+    <div
+        class="flex flex-col gap-3 rounded-xl border border-neutral-200 bg-white/80 p-4 shadow-sm backdrop-blur-sm dark:border-neutral-700 dark:bg-neutral-900/70 sm:flex-row sm:items-center sm:justify-between">
         <div>
             <flux:heading>Purchases</flux:heading>
             <flux:text variant="subtle">Browse saved purchase entries and their totals.</flux:text>
@@ -16,12 +17,13 @@
     </div>
 
     {{-- Table Card --}}
-    <div class="overflow-hidden rounded-xl border border-neutral-200 bg-white/80 shadow-sm backdrop-blur-sm dark:border-neutral-700 dark:bg-neutral-900/70 p-4">
+    <div
+        class="overflow-hidden rounded-xl border border-neutral-200 bg-white/80 shadow-sm backdrop-blur-sm dark:border-neutral-700 dark:bg-neutral-900/70 p-4">
 
         <flux:table :paginate="$purchases">
 
             <flux:table.columns sticky class="bg-neutral-50/80 dark:bg-neutral-800/60">
-                <flux:table.column>ID</flux:table.column>
+                <flux:table.column>#</flux:table.column>
                 <flux:table.column>Items</flux:table.column>
                 <flux:table.column align="end">Total</flux:table.column>
                 <flux:table.column>Created</flux:table.column>
@@ -34,7 +36,7 @@
                         class="hover:bg-neutral-50/70 dark:hover:bg-neutral-800/40">
 
                         <flux:table.cell variant="strong">
-                            #{{ $purchase->id }}
+                            {{ $loop->iteration }}
                         </flux:table.cell>
 
                         <flux:table.cell>
@@ -58,11 +60,13 @@
                                         View
                                     </flux:menu.item>
                                     @role('Admin')
-                                    <flux:menu.item icon="pencil-square" :href="route('purchases.edit', $purchase)" wire:navigate>
+                                    <flux:menu.item icon="pencil-square" :href="route('purchases.edit', $purchase)"
+                                        wire:navigate>
                                         Edit
                                     </flux:menu.item>
                                     <flux:menu.separator />
-                                    <flux:menu.item icon="trash" variant="danger" wire:click="confirmDelete({{ $purchase->id }})">Delete</flux:menu.item>
+                                    <flux:menu.item icon="trash" variant="danger"
+                                        wire:click="confirmDelete({{ $purchase->id }})">Delete</flux:menu.item>
                                     @endrole
                                 </flux:menu>
                             </flux:dropdown>
@@ -83,12 +87,8 @@
 
     </div>
 
-    <flux:modal
-        name="delete-purchase-modal"
-        class="max-w-md md:min-w-md"
-        @close="$wire.closeDeleteModal()"
-        wire:model="showDeleteModal"
-    >
+    <flux:modal name="delete-purchase-modal" class="max-w-md md:min-w-md" @close="$wire.closeDeleteModal()"
+        wire:model="showDeleteModal">
         <div class="space-y-6">
             <div class="space-y-2">
                 <flux:heading size="lg">{{ __('Delete purchase') }}</flux:heading>
@@ -107,4 +107,3 @@
     </flux:modal>
 
 </section>
-
