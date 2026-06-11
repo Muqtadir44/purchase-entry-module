@@ -59,7 +59,7 @@
                                         Edit
                                     </flux:menu.item>
                                     <flux:menu.separator />
-                                    <flux:menu.item icon="trash" variant="danger">Delete</flux:menu.item>
+                                    <flux:menu.item icon="trash" variant="danger" wire:click="confirmDelete({{ $purchase->id }})">Delete</flux:menu.item>
                                 </flux:menu>
                             </flux:dropdown>
                         </flux:table.cell>
@@ -79,4 +79,28 @@
 
     </div>
 
+    <flux:modal
+        name="delete-purchase-modal"
+        class="max-w-md md:min-w-md"
+        @close="$wire.closeDeleteModal()"
+        wire:model="showDeleteModal"
+    >
+        <div class="space-y-6">
+            <div class="space-y-2">
+                <flux:heading size="lg">{{ __('Delete purchase') }}</flux:heading>
+                <flux:text>
+                    {{ __('Are you sure you want to delete this purchase? This action cannot be undone and all associated items will be permanently removed.') }}
+                </flux:text>
+            </div>
+
+            <div class="flex gap-3 justify-end">
+                <flux:modal.close>
+                    <flux:button variant="outline">{{ __('Cancel') }}</flux:button>
+                </flux:modal.close>
+                <flux:button variant="danger" wire:click="deletePurchase">{{ __('Delete') }}</flux:button>
+            </div>
+        </div>
+    </flux:modal>
+
 </section>
+
